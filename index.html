@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>老墨智商测试</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --ink:#101828;
+    --muted:#667085;
+    --line:#e6e9f0;
+    --pri:#4f46e5;
+    --soft:#eef0ff;
+    --radius:22px;
+  }
+  html{-webkit-text-size-adjust:100%}
+  body{
+    min-height:100vh;min-height:100dvh;
+    font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC","Segoe UI",system-ui,-apple-system,sans-serif;
+    color:var(--ink);
+    background-color:#0b1020;
+    background-image:
+      radial-gradient(900px 520px at -10% -10%, rgba(99,102,241,.55), transparent 60%),
+      radial-gradient(800px 480px at 110% 0%, rgba(14,165,233,.40), transparent 55%),
+      radial-gradient(700px 700px at 50% 120%, rgba(168,85,247,.32), transparent 60%),
+      linear-gradient(165deg,#0b1020,#101733 55%,#0a0f1e);
+    background-attachment:fixed;
+    display:flex;justify-content:center;align-items:flex-start;
+    padding:26px 16px 56px;
+    -webkit-font-smoothing:antialiased;
+    -webkit-tap-highlight-color:transparent;
+  }
+  button{font-family:inherit}
+
+  /* ============ 外壳 ============ */
+  .shell{
+    width:100%;max-width:880px;background:#fff;
+    border-radius:var(--radius);
+    box-shadow:0 40px 90px -24px rgba(0,0,0,.65), 0 0 0 1px rgba(255,255,255,.08);
+    overflow:hidden;position:relative;
+  }
+  .page{display:none;padding:36px 38px 42px}
+  .page.active{display:block;animation:pageIn .32s cubic-bezier(.22,1,.36,1) both}
+  @keyframes pageIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+  /* ============ 通用 ============ */
+  .slabel{
+    font-size:13px;font-weight:700;color:var(--ink);
+    margin:0 0 12px;display:flex;align-items:center;gap:9px;
+  }
+  .slabel::before{
+    content:"";width:4px;height:15px;border-radius:3px;
+    background:linear-gradient(180deg,#6366f1,#a855f7);
+  }
+  .foot{font-size:12px;color:#98a2b3;line-height:1.75;margin-top:20px}
+  .hint{font-size:13px;color:var(--muted);margin:0 0 18px}
+
+  .btn-primary{
+    display:inline-flex;align-items:center;justify-content:center;
+    padding:16px 26px;border:none;border-radius:14px;cursor:pointer;
+    font-size:16px;font-weight:700;color:#fff;letter-spacing:.04em;
+    background:linear-gradient(135deg,#6366f1,#4f46e5 55%,#7c3aed);
+    box-shadow:0 16px 34px -12px rgba(79,70,229,.85);
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .btn-primary:hover{transform:translateY(-1px);box-shadow:0 20px 40px -14px rgba(79,70,229,.95)}
+  .btn-primary:active{transform:translateY(0) scale(.995)}
+
+  .btn-ghost{
+    padding:12px 20px;border-radius:12px;border:1.5px solid var(--line);background:#fff;
+    font-size:14px;font-weight:600;color:#344054;cursor:pointer;
+    transition:background .16s,border-color .16s,transform .15s;
+    white-space:nowrap;
+  }
+  .btn-ghost:hover:not(:disabled){background:#f7f8fc;border-color:#d0d5e2}
+  .btn-ghost:active:not(:disabled){transform:scale(.98)}
+  .btn-ghost:disabled{opacity:.38;cursor:not-allowed}
+
+  /* ============ 开始页 ============ */
+  .hero{margin-bottom:22px}
+  .kicker{
+    display:inline-flex;align-items:center;gap:6px;
+    font-size:12px;font-weight:700;letter-spacing:.1em;
+    color:var(--pri);background:var(--soft);
+    padding:6px 13px;border-radius:999px;
+  }
+  .hero h1{
+    font-size:32px;line-height:1.25;letter-spacing:-.02em;
+    margin:14px 0 8px;
+  }
+  .hero p{color:var(--muted);font-size:14.5px;line-height:1.6}
+
+  .intro{
+    background:#f7f8fc;border:1px solid var(--line);border-radius:16px;
+    padding:18px 20px;font-size:13.5px;line-height:1.85;color:#475467;
+    white-space:pre-line;margin-bottom:26px;
+  }
+
+  .optgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:26px}
+  .optcard{
+    position:relative;text-align:left;border:1.5px solid var(--line);background:#fff;
+    border-radius:14px;padding:14px 16px 14px 46px;cursor:pointer;
+    color:var(--ink);transition:border-color .18s,background .18s,box-shadow .18s;
+  }
+  .optcard::before{
+    content:"";position:absolute;left:17px;top:50%;transform:translateY(-50%);
+    width:18px;height:18px;border-radius:50%;border:2px solid #c9cfdd;background:#fff;
+    transition:border-color .18s,background .18s;
+  }
+  .optcard::after{
+    content:"";position:absolute;left:22px;top:50%;
+    width:8px;height:8px;border-radius:50%;background:#fff;
+    transform:translateY(-50%) scale(0);transition:transform .18s;
+  }
+  .optcard.checked{
+    border-color:var(--pri);
+    background:linear-gradient(180deg,#f6f7ff,#eef0ff);
+    box-shadow:0 8px 22px -14px rgba(79,70,229,.9);
+  }
+  .optcard.checked::before{border-color:var(--pri);background:var(--pri)}
+  .optcard.checked::after{transform:translateY(-50%) scale(1)}
+  .oc-title{display:block;font-size:14.5px;font-weight:600;line-height:1.4}
+  .oc-sub{display:block;font-size:12.5px;color:var(--muted);margin-top:3px}
+
+  #btnStart{width:auto;min-width:260px}
+
+  /* ============ 答题页 ============ */
+  .quiz-top{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:14px}
+  .qprog{font-size:13px;font-weight:700;color:var(--pri);letter-spacing:.02em}
+  .qcat{font-size:12.5px;color:var(--muted);margin-top:5px}
+  .timer{
+    font-variant-numeric:tabular-nums;font-size:14px;font-weight:700;color:#344054;
+    background:#f2f4f8;border-radius:999px;padding:7px 15px;white-space:nowrap;
+    transition:background .25s,color .25s;
+  }
+  .timer.warn{color:#fff;background:linear-gradient(135deg,#fb7185,#e11d48);animation:pulse 1.1s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.62}}
+
+  .progressbar{height:6px;border-radius:999px;background:#eef0f5;overflow:hidden;margin-bottom:26px}
+  .progressfill{
+    height:100%;width:0;border-radius:999px;
+    background:linear-gradient(90deg,#6366f1,#a855f7);
+    transition:width .32s cubic-bezier(.22,1,.36,1);
+  }
+
+  .qtext{
+    font-size:19px;line-height:1.68;font-weight:600;
+    white-space:pre-line;margin-bottom:24px;letter-spacing:-.005em;
+  }
+
+  .figseq{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:24px}
+  .seqcell{
+    background:#f7f8fc;border:1px solid var(--line);border-radius:14px;
+    display:flex;align-items:center;justify-content:center;overflow:hidden;flex:none;
+  }
+
+  .opts{display:flex;flex-direction:column;gap:11px;margin-bottom:26px}
+  .opt-btn{
+    display:flex;align-items:center;gap:14px;width:100%;text-align:left;
+    border:1.5px solid var(--line);background:#fff;border-radius:14px;
+    padding:14px 18px;cursor:pointer;font-size:15px;color:var(--ink);
+    line-height:1.5;transition:border-color .16s,background .16s,box-shadow .16s;
+  }
+  .opt-btn .key{
+    flex:none;width:28px;height:28px;border-radius:9px;background:#f2f4f8;color:#667085;
+    display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;
+    transition:background .16s,color .16s;
+  }
+  .opt-btn:hover{border-color:#c7cdfd;background:#fbfbff}
+  .opt-btn.checked{
+    border-color:var(--pri);
+    background:linear-gradient(180deg,#f7f8ff,#eef0ff);
+    box-shadow:0 8px 22px -16px rgba(79,70,229,.95);
+  }
+  .opt-btn.checked .key{background:var(--pri);color:#fff}
+
+  .figopts{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin-bottom:26px}
+  .figopt{
+    position:relative;border:2px solid var(--line);background:#fff;border-radius:16px;
+    cursor:pointer;overflow:hidden;flex:none;
+    display:flex;align-items:center;justify-content:center;
+    transition:border-color .16s,background .16s,box-shadow .16s;
+  }
+  .figopt:hover{border-color:#c7cdfd}
+  .figopt.sel{
+    border-color:var(--pri);background:#f2f3ff;
+    box-shadow:0 12px 26px -18px rgba(79,70,229,1);
+  }
+  .figopt .lt{
+    position:absolute;left:9px;top:6px;font-size:12px;font-weight:800;
+    color:#a0a8bd;z-index:2;letter-spacing:.02em;
+  }
+  .figopt.sel .lt{color:var(--pri)}
+
+  .quiz-actions{
+    display:flex;align-items:center;gap:12px;
+    border-top:1px solid var(--line);padding-top:20px;
+  }
+  .quiz-actions .spacer{flex:1}
+  .btn-small{padding:12px 28px;border-radius:12px;font-size:14px;font-weight:700;width:auto}
+
+  .confirm{
+    display:none;margin-top:18px;padding:16px 18px;border-radius:14px;
+    background:#fff8ed;border:1px solid #fed7aa;color:#9a3412;
+    font-size:14px;line-height:1.65;
+  }
+  .confirm.show{display:block;animation:pageIn .22s both}
+  .confirm-actions{display:flex;gap:10px;margin-top:13px;flex-wrap:wrap}
+  .btn-danger{
+    padding:10px 20px;border-radius:10px;border:none;cursor:pointer;
+    background:linear-gradient(135deg,#f87171,#e11d48);color:#fff;
+    font-size:14px;font-weight:700;
+    box-shadow:0 10px 22px -12px rgba(225,29,72,.95);
+  }
+  .btn-mini{
+    padding:10px 20px;border-radius:10px;border:1.5px solid #fed7aa;
+    background:#fff;color:#9a3412;font-size:14px;font-weight:600;cursor:pointer;
+  }
+
+  /* ============ 结果页 ============ */
+  .result-top{display:flex;gap:30px;align-items:center;flex-wrap:wrap;margin-bottom:26px}
+  .iq-wrap{
+    position:relative;flex:none;width:168px;height:168px;border-radius:50%;
+    background:linear-gradient(135deg,#6366f1,#a855f7);padding:6px;
+    box-shadow:0 26px 52px -22px rgba(99,102,241,.95);
+  }
+  .iq-inner{
+    width:100%;height:100%;border-radius:50%;background:#fff;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+  }
+  .iq-num{
+    font-size:48px;font-weight:800;line-height:1;letter-spacing:-.03em;
+    background:linear-gradient(135deg,#4f46e5,#a855f7);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .iq-label{font-size:12px;color:var(--muted);margin-top:8px;letter-spacing:.1em}
+
+  .result-meta{flex:1;min-width:220px}
+  .grade{font-size:19px;font-weight:800;margin-bottom:14px;line-height:1.45}
+  .meta-row{font-size:14px;color:#475467;margin-bottom:7px;line-height:1.55}
+  .meta-row.small{font-size:12.5px;color:var(--muted);margin-bottom:0}
+
+  .verdict{
+    background:linear-gradient(180deg,#f8f9ff,#f2f4ff);
+    border:1px solid #e4e7ff;border-radius:16px;padding:19px 21px;
+    font-size:14.5px;line-height:1.85;color:#3b3f57;
+    white-space:pre-line;margin-bottom:28px;
+  }
+
+  .bars{display:flex;flex-direction:column;gap:17px;margin-bottom:30px}
+  .bar-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:8px}
+  .bar-name{font-size:13.5px;font-weight:700;color:#344054}
+  .bar-detail{font-size:12.5px;color:var(--muted);white-space:nowrap}
+  .bar-track{height:9px;border-radius:999px;background:#eef0f5;overflow:hidden}
+  .bar-fill{
+    height:100%;border-radius:999px;width:0;
+    transition:width .9s cubic-bezier(.22,1,.36,1);
+  }
+
+  .result-actions{display:flex;gap:12px;flex-wrap:wrap}
+  .result-actions button{flex:1;min-width:150px}
+
+  /* ============ 回顾页 ============ */
+  .review-title{font-size:20px;font-weight:800;margin-bottom:6px;letter-spacing:-.01em}
+  .review-sub{font-size:13px;color:var(--muted);margin-bottom:20px}
+  .review-list{
+    display:flex;flex-direction:column;gap:8px;margin-bottom:26px;
+    max-height:58vh;overflow:auto;padding-right:6px;
+    -webkit-overflow-scrolling:touch;
+  }
+  .review-list::-webkit-scrollbar{width:8px}
+  .review-list::-webkit-scrollbar-thumb{background:#dfe3ec;border-radius:8px}
+  .rev-item{
+    display:flex;gap:12px;align-items:flex-start;padding:12px 14px;
+    border-radius:12px;background:#f8f9fc;border:1px solid var(--line);
+    font-size:13.5px;
+  }
+  .rev-item.ok{background:#f0fdf5;border-color:#c8f0d8}
+  .rev-item.no{background:#fff5f5;border-color:#ffd9d9}
+  .rev-idx{
+    flex:none;width:34px;font-weight:800;color:#98a2b3;
+    font-variant-numeric:tabular-nums;padding-top:2px;
+  }
+  .rev-body{flex:1;min-width:0;line-height:1.6}
+  .rev-line{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+  .rev-cat{font-size:11.5px;color:#98a2b3;font-weight:600}
+  .rev-status{font-size:12.5px;font-weight:800;white-space:nowrap}
+  .rev-item.ok .rev-status{color:#059669}
+  .rev-item.no .rev-status{color:#e11d48}
+  .rev-ans{font-weight:600;color:#344054;margin-top:2px;word-break:break-word}
+
+  /* ============ 响应式 ============ */
+  @media (max-width:640px){
+    body{padding:12px 10px 40px}
+    .shell{border-radius:18px}
+    .page{padding:22px 18px 26px}
+    .hero h1{font-size:26px}
+    .hero p{font-size:13.5px}
+    .intro{padding:15px 16px;font-size:13px;line-height:1.8;border-radius:13px}
+    .qtext{font-size:17px;line-height:1.65;margin-bottom:20px}
+    .iq-wrap{width:132px;height:132px}
+    .iq-num{font-size:38px}
+    .grade{font-size:17px}
+    .verdict{font-size:13.5px;padding:16px 17px}
+    #btnStart{width:100%;min-width:0}
+    .result-actions button{flex:1 1 100%}
+  }
+  @media (max-width:430px){
+    .optgrid{grid-template-columns:1fr}
+    .quiz-actions{flex-wrap:wrap}
+    .quiz-actions .spacer{display:none}
+    #btnPrev,#btnNext{flex:1 1 40%}
+    #btnSubmit{flex:1 1 100%;order:3}
+    .result-top{gap:20px}
+  }
+</style>
+</head>
+<body>
+
+<main class="shell">
+
+  <!-- ================= 页 0：开始页 ================= -->
+  <section class="page active" id="page0">
+    <div class="hero">
+      <span class="kicker">IQ TEST · 分年龄测评</span>
+      <h1>老墨智商测试</h1>
+      <p>数列 / 逻辑 / 词汇 / 空间 / 图形 五个维度</p>
+    </div>
+
+    <div class="intro" id="sIntro"></div>
+
+    <div class="slabel">第一步 · 选择年龄段</div>
+    <div class="optgrid">
+      <button class="optcard" data-group="age" data-idx="0">
+        <span class="oc-title">少儿版</span>
+        <span class="oc-sub">8-12 岁 · 30 题</span>
+      </button>
+      <button class="optcard" data-group="age" data-idx="1">
+        <span class="oc-title">青少年版</span>
+        <span class="oc-sub">13-17 岁 · 35 题</span>
+      </button>
+      <button class="optcard" data-group="age" data-idx="2">
+        <span class="oc-title">成人版</span>
+        <span class="oc-sub">18-59 岁 · 40 题</span>
+      </button>
+      <button class="optcard" data-group="age" data-idx="3">
+        <span class="oc-title">中老年版</span>
+        <span class="oc-sub">60 岁以上 · 40 题</span>
+      </button>
+    </div>
+
+    <div class="slabel">第二步 · 选择模式</div>
+    <div class="optgrid">
+      <button class="optcard" data-group="mode" data-idx="0">
+        <span class="oc-title">限时模式</span>
+        <span class="oc-sub">更接近正式测验</span>
+      </button>
+      <button class="optcard" data-group="mode" data-idx="1">
+        <span class="oc-title">不限时模式</span>
+        <span class="oc-sub">适合第一次接触这类题的人</span>
+      </button>
+    </div>
+
+    <div class="hint" id="sVerinfo"></div>
+
+    <button class="btn-primary" id="btnStart">开 始 测 试</button>
+
+    <p class="foot">纯本地程序，不联网、不上传任何数据。适合 8 岁以上人群。</p>
+  </section>
+
+  <!-- ================= 页 1：答题页 ================= -->
+  <section class="page" id="page1">
+    <div class="quiz-top">
+      <div>
+        <div class="qprog" id="qProgress"></div>
+        <div class="qcat" id="qCat"></div>
+      </div>
+      <div class="timer" id="qTimer"></div>
+    </div>
+
+    <div class="progressbar"><div class="progressfill" id="qBar"></div></div>
+
+    <h2 class="qtext" id="qQuestion"></h2>
+
+    <div class="figseq" id="figSeq"></div>
+
+    <div class="opts" id="textOpts">
+      <button class="opt-btn" id="opt0"><span class="key">A</span><span class="rt"></span></button>
+      <button class="opt-btn" id="opt1"><span class="key">B</span><span class="rt"></span></button>
+      <button class="opt-btn" id="opt2"><span class="key">C</span><span class="rt"></span></button>
+      <button class="opt-btn" id="opt3"><span class="key">D</span><span class="rt"></span></button>
+    </div>
+
+    <div class="figopts" id="figOpts">
+      <button class="figopt" id="figopt0"><span class="lt">A</span></button>
+      <button class="figopt" id="figopt1"><span class="lt">B</span></button>
+      <button class="figopt" id="figopt2"><span class="lt">C</span></button>
+      <button class="figopt" id="figopt3"><span class="lt">D</span></button>
+    </div>
+
+    <div class="quiz-actions">
+      <button class="btn-ghost" id="btnPrev">← 上一题</button>
+      <button class="btn-ghost" id="btnNext">下一题 →</button>
+      <div class="spacer"></div>
+      <button class="btn-primary btn-small" id="btnSubmit">交 卷</button>
+    </div>
+
+    <div class="confirm" id="confirmBox">
+      <div id="confirmLbl"></div>
+      <div class="confirm-actions">
+        <button class="btn-danger" id="btnConfirmYes">确定交卷</button>
+        <button class="btn-mini" id="btnConfirmNo">继续答题</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 页 2：结果页 ================= -->
+  <section class="page" id="page2">
+    <div class="result-top">
+      <div class="iq-wrap">
+        <div class="iq-inner">
+          <div class="iq-num" id="rScore">--</div>
+          <div class="iq-label">标准智商分</div>
+        </div>
+      </div>
+      <div class="result-meta">
+        <div class="grade" id="rGrade"></div>
+        <div class="meta-row" id="rRange"></div>
+        <div class="meta-row" id="rPct"></div>
+        <div class="meta-row small" id="rTimeused"></div>
+      </div>
+    </div>
+
+    <div class="verdict" id="rVerdict"></div>
+
+    <div class="bars" id="barsBox"></div>
+
+    <div class="result-actions">
+      <button class="btn-ghost" id="rReview">查看逐题回顾</button>
+      <button class="btn-primary" id="rRestart">重新测一次</button>
+    </div>
+
+    <p class="foot">
+      本结果由分年龄题库估算，仅供参考，不构成临床诊断。<br>
+      如需正式评估，请联系专业机构进行韦氏（WAIS-IV）或瑞文标准推理测验。
+    </p>
+  </section>
+
+  <!-- ================= 页 3：逐题回顾 ================= -->
+  <section class="page" id="page3">
+    <h2 class="review-title">逐题回顾</h2>
+    <p class="review-sub" id="reviewSub"></p>
+    <div class="review-list" id="reviewList"></div>
+    <button class="btn-ghost" id="reviewBack">← 返回结果页</button>
+  </section>
+
+</main>
+
+<script>
+'use strict';
+
+/* ================= 常量与题库 ================= */
+var CAT_NUM=0, CAT_LOGIC=1, CAT_VERBAL=2, CAT_SPATIAL=3, CAT_FIG=4;
+var CATS = ['数列推理','逻辑推理','词汇类比','空间思维','图形规律'];
+
+function sh(k, dots, filled, scale, rot){ return {k:k, dots:dots||0, filled:!!filled, scale:scale||100, rot:rot||0}; }
+function QM(){ return {k:0, dots:-1, filled:false, scale:100, rot:0}; }
+function T(text, cat, weight, opts, ans){ return {text:text, cat:cat, weight:weight, isFig:false, opts:opts, ans:ans}; }
+function F(text, cat, weight, seq, figOpts, ans){ return {text:text, cat:cat, weight:weight, isFig:true, seq:seq, figOpts:figOpts, ans:ans}; }
+
+var QUESTIONS = [
+  // ===== 数列推理 8 题（0..7）=====
+  T('请找出数列的规律，括号里应填什么？\n2、4、6、8、（ ）', CAT_NUM, 1, ['9','10','11','12'], 1),
+  T('1、3、6、10、15、（ ）', CAT_NUM, 2, ['18','20','21','24'], 2),
+  T('2、3、5、8、12、（ ）', CAT_NUM, 2, ['15','16','17','18'], 2),
+  T('1、4、9、16、25、（ ）', CAT_NUM, 2, ['30','32','35','36'], 3),
+  T('2、6、18、54、（ ）', CAT_NUM, 2, ['108','126','162','160'], 2),
+  T('1、1、2、3、5、8、（ ）', CAT_NUM, 2, ['11','12','13','14'], 2),
+  T('3、7、16、35、（ ）', CAT_NUM, 3, ['64','70','72','74'], 3),
+  T('4、9、25、49、（ ）', CAT_NUM, 3, ['64','81','100','121'], 3),
+  // ===== 逻辑推理 10 题（8..17）=====
+  T('甲比乙高，丙比甲高。由此可以推出：', CAT_LOGIC, 1, ['乙比丙高','丙比乙高','甲和丙一样高','无法比较乙和丙'], 1),
+  T('所有的钢琴家都会识谱，小张会识谱。由此可以推出：', CAT_LOGIC, 2, ['小张是钢琴家','小张不是钢琴家','不能确定小张是不是钢琴家','会识谱的都是钢琴家'], 2),
+  T('如果明天下雨，运动会就延期。现在运动会没有延期。由此可以推出：', CAT_LOGIC, 2, ['明天没有下雨','明天一定下雨','运动会取消了','无法确定下没下雨'], 0),
+  T('排队买票时，小明前面有 3 个人，后面有 4 个人。这支队伍一共有多少人？', CAT_LOGIC, 1, ['6 人','7 人','8 人','9 人'], 2),
+  T('钟表 4 点整时，时针与分针的夹角是多少度？', CAT_LOGIC, 2, ['90 度','120 度','150 度','180 度'], 1),
+  T('一块豆腐（立方体形状）切 3 刀，最多能切成多少块？', CAT_LOGIC, 3, ['6 块','7 块','8 块','9 块'], 2),
+  T('聚会上一共 5 个人，每两人都握一次手，一共握了多少次手？', CAT_LOGIC, 2, ['8 次','10 次','12 次','20 次'], 1),
+  T('一根 1 米长的木棍，每天截去剩下的一半。第 3 天截完后，剩下的木棍有多长？', CAT_LOGIC, 2, ['1/4 米','1/6 米','1/8 米','1/16 米'], 2),
+  T('找规律：字母序列 A、C、F、J、O、（ ）', CAT_LOGIC, 2, ['R','S','T','U'], 3),
+  T('三个盒子上分别贴着「苹果」「橘子」「混合」的标签，已知所有标签都贴错了。允许你从一个盒子里摸出一个水果查看，应该从哪个盒子摸，才能确定全部标签？', CAT_LOGIC, 3, ['贴「苹果」的盒子','贴「橘子」的盒子','贴「混合」的盒子','随便哪个都行'], 2),
+  // ===== 词汇类比 8 题（18..25）=====
+  T('医生 : 医院 相当于 教师 : （ ）', CAT_VERBAL, 1, ['课本','学校','学生','黑板'], 1),
+  T('热 : 冷 相当于 高 : （ ）', CAT_VERBAL, 1, ['大','远','低','重'], 2),
+  T('「犹豫」的反义词是：', CAT_VERBAL, 1, ['迟疑','果断','纠结','担心'], 1),
+  T('鸟 : 翼 相当于 鱼 : （ ）', CAT_VERBAL, 2, ['水','鳞','鳍','鳃'], 2),
+  T('与「同室操戈」意思最接近的成语是：', CAT_VERBAL, 2, ['同心协力','自相残杀','借刀杀人','事半功倍'], 1),
+  T('秒 : 分 相当于 克 : （ ）', CAT_VERBAL, 2, ['千克','两','吨','升'], 0),
+  T('「画蛇添足」这个成语的寓意是：', CAT_VERBAL, 1, ['精益求精','多此一举','锦上添花','弄假成真'], 1),
+  T('下面哪个词与其他三个不是同一类？', CAT_VERBAL, 1, ['苹果','香蕉','白菜','橘子'], 2),
+  // ===== 空间思维 6 题（26..31）=====
+  T('把一根木头锯成 4 段，需要锯几次？', CAT_SPATIAL, 1, ['2 次','3 次','4 次','5 次'], 1),
+  T('一个骰子相对两个面的点数之和都是 7。如果 3 点朝上，那么与它相对的一面是几点？', CAT_SPATIAL, 1, ['2 点','3 点','4 点','5 点'], 2),
+  T('时钟正好指在 3:00，把它照在镜子里，镜中的时钟显示是几点？', CAT_SPATIAL, 2, ['6:00','9:00','12:00','3:00'], 1),
+  T('3 只猫 3 分钟能抓 3 只老鼠。照这样的速度，9 只猫抓 9 只老鼠需要几分钟？', CAT_SPATIAL, 2, ['3 分钟','6 分钟','9 分钟','27 分钟'], 0),
+  T('池塘里的睡莲覆盖面积每天扩大一倍，48 天正好盖满池塘。问盖住半个池塘时是第几天？', CAT_SPATIAL, 2, ['24 天','36 天','46 天','47 天'], 3),
+  T('从 1 楼走到 3 楼需要 20 秒。照这样的速度（每层用时相同），从 1 楼走到 5 楼需要多少秒？', CAT_SPATIAL, 2, ['30 秒','40 秒','50 秒','60 秒'], 1),
+  // ===== 图形规律 8 题（32..39）=====
+  F('观察图形序列的规律，问号处应填入哪个图形？', CAT_FIG, 1,
+    [sh(0,1), sh(0,2), sh(0,3), QM()],
+    [sh(0,5), sh(0,4), sh(1,4), sh(0,3)], 1),
+  F('观察图形序列的规律，问号处应填入哪个图形？', CAT_FIG, 2,
+    [sh(0), sh(1), sh(2), sh(0), QM()],
+    [sh(1), sh(2), sh(0), sh(3)], 0),
+  F('观察图形序列的规律，问号处应填入哪个图形？', CAT_FIG, 2,
+    [sh(2), sh(1), sh(4), QM()],
+    [sh(0), sh(1), sh(5), sh(4)], 2),
+  F('注意形状和填充两个规律，问号处应填入哪个图形？', CAT_FIG, 3,
+    [sh(0,0,true), sh(1), sh(2,0,true), sh(0), QM()],
+    [sh(1), sh(1,0,true), sh(2,0,true), sh(3)], 1),
+  F('观察图形序列的规律，问号处应填入哪个图形？', CAT_FIG, 2,
+    [sh(0,0,false,45), sh(0,0,false,68), sh(0,0,false,90), QM()],
+    [sh(0,0,false,112), sh(0,0,false,90), sh(1,0,false,112), sh(0,0,false,45)], 0),
+  F('观察图形序列的规律，问号处应填入哪个图形？', CAT_FIG, 1,
+    [sh(0,2), sh(0,4), sh(0,6), QM()],
+    [sh(1,8), sh(0,7), sh(0,6), sh(0,8)], 3),
+  F('图形的边数和内部点数之间有联系，问号处应填入哪个图形？', CAT_FIG, 3,
+    [sh(2,3), sh(1,4), QM()],
+    [sh(4,5), sh(4,4), sh(5,6), sh(1,5)], 0),
+  F('箭头每次转动一定的角度，问号处应填入哪个图形？', CAT_FIG, 2,
+    [sh(6,0,true,90,0), sh(6,0,true,90,90), sh(6,0,true,90,180), QM()],
+    [sh(6,0,true,90,270), sh(6,0,true,90,90), sh(6,0,true,90,0), sh(6,0,true,90,180)], 1),
+  // ===== 少儿版（8-12 岁）独有 30 题，索引 40..69 =====
+  // --- 词汇类比 6 题（40..45）---
+  T('「大」的反义词是：', CAT_VERBAL, 1, ['小','高','长','多'], 0),
+  T('医生在医院工作，老师在（ ）工作。', CAT_VERBAL, 1, ['课本','学校','学生','黑板'], 1),
+  T('「高兴」的反义词是：', CAT_VERBAL, 1, ['生气','难过','开心','着急'], 1),
+  T('脚 : 鞋 相当于 手 : （ ）', CAT_VERBAL, 1, ['帽子','手套','袜子','戒指'], 1),
+  T('下面哪一个是交通工具？', CAT_VERBAL, 1, ['铅笔','自行车','椅子','盘子'], 1),
+  T('一年四季的顺序是：春、夏、秋、冬。夏天后面是哪个季节？', CAT_VERBAL, 1, ['春天','冬天','秋天','夏天'], 2),
+  // --- 逻辑推理 6 题（46..51）---
+  T('树上有 5 只鸟，飞走了 2 只，又飞来了 1 只。现在树上有几只鸟？', CAT_LOGIC, 1, ['3 只','4 只','5 只','6 只'], 1),
+  T('小明比小红高，小红比小刚高。他们三个谁最高？', CAT_LOGIC, 1, ['小明','小红','小刚','一样高'], 0),
+  T('今天是星期二，后天是星期几？', CAT_LOGIC, 1, ['星期三','星期四','星期五','星期六'], 1),
+  T('排队时，你前面有 2 个人，后面有 3 个人。这支队伍一共有多少人？', CAT_LOGIC, 2, ['5 人','6 人','7 人','8 人'], 1),
+  T('妈妈买了 12 个苹果，全家每天吃 2 个。几天可以吃完？', CAT_LOGIC, 2, ['4 天','5 天','6 天','8 天'], 2),
+  T('妈妈今年比小红大 25 岁。5 年之后，妈妈比小红大几岁？', CAT_LOGIC, 2, ['20 岁','25 岁','30 岁','无法知道'], 1),
+  // --- 数列推理 6 题（52..57）---
+  T('找规律填数：1、2、3、4、（ ）', CAT_NUM, 1, ['5','6','7','8'], 0),
+  T('2、4、6、8、（ ）', CAT_NUM, 1, ['9','10','11','12'], 1),
+  T('5、10、15、20、（ ）', CAT_NUM, 1, ['22','23','25','30'], 2),
+  T('10、9、8、7、（ ）', CAT_NUM, 1, ['5','6','8','4'], 1),
+  T('1、3、5、7、（ ）', CAT_NUM, 1, ['8','9','10','11'], 1),
+  T('1、2、4、8、（ ）', CAT_NUM, 2, ['12','14','16','18'], 2),
+  // --- 空间思维 6 题（58..63）---
+  T('一根绳子剪 3 刀，能剪成几段？', CAT_SPATIAL, 1, ['3 段','4 段','5 段','6 段'], 1),
+  T('正方形有几条边？', CAT_SPATIAL, 1, ['3 条','4 条','5 条','6 条'], 1),
+  T('一个西瓜切 2 刀，最多能切成几块？', CAT_SPATIAL, 2, ['2 块','3 块','4 块','6 块'], 2),
+  T('一只小狗有 4 条腿。3 只小狗一共有多少条腿？', CAT_SPATIAL, 1, ['7 条','9 条','12 条','15 条'], 2),
+  T('从 1 楼走到 2 楼要走 1 层楼梯。从 1 楼走到 4 楼要走几层楼梯？', CAT_SPATIAL, 2, ['2 层','3 层','4 层','5 层'], 1),
+  T('你对着镜子举起自己的右手。镜子里的「你」举起的是哪只手？', CAT_SPATIAL, 2, ['右手','左手','两只手','都不举'], 1),
+  // --- 图形规律 6 题（64..69）---
+  F('观察图形序列的规律，问号处应填入哪个图形？', CAT_FIG, 1,
+    [sh(0,1), sh(0,2), sh(0,3), QM()],
+    [sh(0,5), sh(0,4), sh(1,4), sh(0,3)], 1),
+  F('观察图形序列的规律，问号处应填入哪个图形？', CAT_FIG, 1,
+    [sh(0), sh(1), sh(2), QM()],
+    [sh(1), sh(2), sh(0), sh(3)], 2),
+  F('图形越来越大，问号处应填入哪个图形？', CAT_FIG, 1,
+    [sh(0,0,false,45), sh(0,0,false,68), QM()],
+    [sh(0,0,false,90), sh(0,0,false,68), sh(1,0,false,90), sh(0,0,false,45)], 0),
+  F('观察图形序列的规律，问号处应填入哪个图形？', CAT_FIG, 1,
+    [sh(0,2), sh(0,4), sh(0,6), QM()],
+    [sh(1,8), sh(0,7), sh(0,6), sh(0,8)], 3),
+  F('注意颜色的规律（黑色=实心），问号处应填入哪个图形？', CAT_FIG, 2,
+    [sh(0,0,true), sh(0), sh(0,0,true), QM()],
+    [sh(0,0,true), sh(0), sh(1,0,true), sh(1)], 1),
+  F('图形的边数越来越多，问号处应填入哪个图形？', CAT_FIG, 2,
+    [sh(2), sh(1), QM()],
+    [sh(4), sh(5), sh(2), sh(1)], 0)
+];
+
+/* ================= 全局状态 ================= */
+var g_state = 0;
+var g_answers = [], g_exam = [];
+var g_current = 0, g_count = 40;
+var g_version = 2;
+var g_mean = 42.0, g_sd = 8.0;
+var g_timeMin = 30, g_limited = true;
+var g_noConfirm = false, g_ansMode = 0, g_gotoN = -1;
+var g_startTick = 0, g_remainingSec = 30*60, g_finished = false, g_iqFinal = 0;
+var g_timerId = null;
+var g_catStats = [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]];
+
+function $(id){ return document.getElementById(id); }
+function CURQ(){ return QUESTIONS[g_exam[g_current]]; }
+function catName(c){ return CATS[c]; }
+function pad2(n){ return (n < 10 ? '0' : '') + n; }
+function esc(s){
+  return String(s).replace(/[&<>"']/g, function(ch){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];
+  });
+}
+
+/* ================= 图形绘制 ================= */
+function polyPts(kind, r, cx, cy){
+  var sides = 0, start = -90;
+  switch (kind) {
+    case 2: sides = 3; break;
+    case 3: sides = 4; break;
+    case 4: sides = 5; break;
+    case 5: sides = 6; break;
+    case 1: sides = 4; start = -45; break;
+    default: return [];
+  }
+  var pts = [];
+  for (var i = 0; i < sides; i++) {
+    var ang = (start + i * 360.0 / sides) * Math.PI / 180.0;
+    pts.push([cx + r * Math.cos(ang), cy + r * Math.sin(ang)]);
+  }
+  return pts;
+}
+function arrowPts(r, cx, cy, rotDeg){
+  var w = r * 0.62;
+  var raw = [
+    [-r*0.9, -w], [r*0.25, -w],
+    [r*0.25, -r*0.85], [r, 0],
+    [r*0.25, r*0.85], [r*0.25, w],
+    [-r*0.9, w]
+  ];
+  var rad = rotDeg * Math.PI / 180.0, cs = Math.cos(rad), sn = Math.sin(rad);
+  var out = [];
+  for (var i = 0; i < 7; i++)
+    out.push([cx + raw[i][0]*cs - raw[i][1]*sn, cy + raw[i][0]*sn + raw[i][1]*cs]);
+  return out;
+}
+function dotLayout(n, spread, cx, cy){
+  var out = [];
+  if (n === 1) { out.push([cx, cy]); return out; }
+  var rows = (n + 1) >> 1, placed = 0;
+  for (var row = 0; row < rows && placed < n; row++) {
+    var y = (rows === 1) ? cy : cy - spread + (2.0 * spread) * row / (rows - 1);
+    var colsThis = (n - placed) >= 2 ? 2 : 1;
+    for (var c = 0; c < colsThis; c++) {
+      var x = (colsThis === 1) ? cx : (c === 0 ? cx - spread * 0.8 : cx + spread * 0.8);
+      out.push([x, y]); placed++;
+    }
+  }
+  return out;
+}
+function setupCanvas(cv, w, h){
+  var dpr = Math.max(1, window.devicePixelRatio || 1);
+  cv.width = Math.round(w * dpr);
+  cv.height = Math.round(h * dpr);
+  cv.style.width = w + 'px';
+  cv.style.height = h + 'px';
+  var ctx = cv.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  return ctx;
+}
+function drawShape(ctx, s, W, H){
+  ctx.clearRect(0, 0, W, H);
+  if (!s || s.dots === -1) {
+    ctx.fillStyle = 'rgb(120,120,190)';
+    ctx.font = 'bold ' + Math.round(Math.min(W,H)*0.36) + 'px "Segoe UI","Microsoft YaHei",sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('?', W/2, H/2 + 2);
+    return;
+  }
+  var cx = W/2, cy = H/2;
+  var r = Math.min(W, H) / 2.0 * 0.72 * (s.scale / 100.0);
+  ctx.strokeStyle = 'rgb(58,58,74)';
+  ctx.fillStyle = 'rgb(58,58,74)';
+  ctx.lineWidth = Math.max(1.6, Math.min(W,H) * 0.016);
+  ctx.beginPath();
+  if (s.k === 0) {
+    ctx.arc(cx, cy, r, 0, Math.PI*2);
+  } else {
+    var pts = (s.k === 6) ? arrowPts(r, cx, cy, s.rot) : polyPts(s.k, r, cx, cy);
+    for (var i = 0; i < pts.length; i++) {
+      if (i === 0) ctx.moveTo(pts[i][0], pts[i][1]);
+      else ctx.lineTo(pts[i][0], pts[i][1]);
+    }
+    ctx.closePath();
+  }
+  if (s.filled) ctx.fill();
+  ctx.stroke();
+  if (s.dots > 0 && s.k !== 6) {
+    var dp = dotLayout(s.dots, r * 0.55, cx, cy);
+    var dotR = r * 0.11; if (dotR < 2.4) dotR = 2.4;
+    ctx.beginPath();
+    for (var j = 0; j < dp.length; j++) {
+      ctx.moveTo(dp[j][0] + dotR, dp[j][1]);
+      ctx.arc(dp[j][0], dp[j][1], dotR, 0, Math.PI*2);
+    }
+    ctx.fill();
+  }
+}
+
+/* ================= 定标与卷面 ================= */
+function buildVersion(ver){
+  var timeMin;
+  if (ver === 0) {
+    g_exam = []; for (var i = 0; i < 30; i++) g_exam.push(40 + i);
+    g_count = 30; g_mean = 23.0; g_sd = 6.5; timeMin = 20;
+  } else if (ver === 1) {
+    g_exam = [];
+    for (var j = 0; j < 40; j++) {
+      if (j === 6 || j === 7 || j === 13 || j === 18 || j === 38) continue;
+      g_exam.push(j);
+    }
+    g_count = g_exam.length; g_mean = 33.0; g_sd = 7.0; timeMin = 25;
+  } else {
+    g_exam = []; for (var k = 0; k < 40; k++) g_exam.push(k);
+    g_count = 40; g_mean = 42.0; g_sd = 8.0; timeMin = 30;
+  }
+  return timeMin;
+}
+function versionName(ver){
+  return ['少儿版（8-12 岁）','青少年版（13-17 岁）','成人版（18-59 岁）','中老年版（60 岁以上）'][ver];
+}
+
+/* ================= 页面切换 ================= */
+function showPage(page){
+  g_state = page;
+  for (var i = 0; i < 4; i++) $('page' + i).classList.toggle('active', i === page);
+  if (page !== 1) hideConfirm();
+  if (page === 1) updateTimerLabel();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ================= 开始页 ================= */
+function getChecked(group){
+  var els = document.querySelectorAll('[data-group="' + group + '"]');
+  for (var i = 0; i < els.length; i++) if (els[i].classList.contains('checked')) return +els[i].getAttribute('data-idx');
+  return 0;
+}
+function setChecked(group, idx){
+  var els = document.querySelectorAll('[data-group="' + group + '"]');
+  for (var i = 0; i < els.length; i++)
+    els[i].classList.toggle('checked', +els[i].getAttribute('data-idx') === idx);
+}
+function updateIntro(){
+  var ver = getChecked('age');
+  g_version = ver;
+  var timeMin = buildVersion(ver);
+  var intro;
+  if (ver === 0) {
+    intro = '【少儿版说明 · 共 ' + g_count + ' 题，限时 ' + timeMin + ' 分钟】\n'
+      + '· 题目都是贴近生活的：数数找规律、找不同类、生活小推理、看图形找规律。\n'
+      + '· 拿不准也要蒙一个，空着按答错算。\n'
+      + '· 分数是和同龄小朋友比较得出的，100 分代表同龄人的平均水平。\n'
+      + '· 8 岁以下的小朋友不建议测试，题目会看不太懂。';
+  } else if (ver === 1) {
+    intro = '【青少年版说明 · 共 ' + g_count + ' 题，限时 ' + timeMin + ' 分钟】\n'
+      + '· 题型与成人版相同，去掉了 5 道最难的题，难度适中。\n'
+      + '· 测试时不要查资料、不要用计算器，否则分数不准。\n'
+      + '· 分数是和同龄人比较得出的，100 分代表同龄人的平均水平。';
+  } else if (ver === 2) {
+    intro = '【成人版说明 · 共 ' + g_count + ' 题，限时 ' + timeMin + ' 分钟】\n'
+      + '· 难度不同分值不同（1~3 分），包含文字题和图形推理题。\n'
+      + '· 建议一次性完成，中途不要查资料、不要用计算器，否则分数不准。\n'
+      + '· 分数是和其他成年人比较得出的，100 分代表成人平均水平。\n'
+      + '· 正式的智力评估请到专业机构做韦氏（WAIS）或瑞文测验。';
+  } else {
+    intro = '【中老年版说明 · 共 ' + g_count + ' 题，建议不限时】\n'
+      + '· 题目与成人版相同，但默认不限时：反应速度随年龄自然变化，\n'
+      + '  限时反而测不准真实水平，建议选「不限时模式」从容作答。\n'
+      + '· 分数是和同龄人比较得出的，100 分代表同龄人的平均水平。';
+  }
+  intro += '\n【计分方式】按难度加权计分后换算为标准智商分（平均值 100，标准差 15），给出估分区间和百分位。结果仅供参考，不是临床诊断。';
+  $('sIntro').textContent = intro;
+  $('sVerinfo').textContent = '已选择：' + versionName(ver) + ' · ' + g_count + ' 题 · 限时模式时长 ' + timeMin + ' 分钟';
+}
+
+/* ================= 测验流程 ================= */
+function startTest(){
+  g_limited = (getChecked('mode') === 0);
+  var ver = getChecked('age');
+  g_version = ver;
+  var timeMin = buildVersion(ver);
+
+  g_answers = []; for (var i = 0; i < g_count; i++) g_answers.push(-1);
+
+  if (g_noConfirm) {
+    for (var j = 0; j < g_count; j++) {
+      var correct = QUESTIONS[g_exam[j]].ans;
+      g_answers[j] = (g_ansMode === 4) ? ((j % 5 === 4) ? (correct + 1) % 4 : correct) : 0;
+    }
+  }
+
+  g_current = (g_gotoN >= 0 && g_gotoN < g_count) ? g_gotoN : 0;
+  g_finished = false;
+  g_startTick = Date.now();
+  g_remainingSec = timeMin * 60;
+  g_timeMin = timeMin;
+
+  stopTimer();
+  g_timerId = setInterval(onTimer, 1000);
+  showPage(1);
+  renderQuestion();
+}
+function onTimer(){
+  if (g_state !== 1 || !g_limited || g_finished) return;
+  g_remainingSec--;
+  updateTimerLabel();
+  if (g_remainingSec <= 0) {
+    stopTimer();
+    confirmSubmit(true);
+  }
+}
+function updateTimerLabel(){
+  var el = $('qTimer');
+  var s = Math.max(0, g_remainingSec);
+  el.textContent = '剩余 ' + pad2(Math.floor(s / 60)) + ':' + pad2(s % 60);
+  el.classList.toggle('warn', g_limited && s <= 60);
+}
+function stopTimer(){ if (g_timerId) { clearInterval(g_timerId); g_timerId = null; } }
+
+/* ================= 渲染题目 ================= */
+var optEls = [], figOptEls = [];
+
+function renderQuestion(){
+  var q = CURQ();
+  $('qProgress').textContent = '第 ' + (g_current + 1) + ' / ' + g_count + ' 题';
+  $('qCat').textContent = '【' + catName(q.cat) + '】· ' + q.weight + ' 分';
+  $('qTimer').style.display = g_limited ? '' : 'none';
+  updateTimerLabel();
+  $('qQuestion').textContent = q.text;
+  $('qBar').style.width = ((g_current + 1) / g_count * 100) + '%';
+
+  hideConfirm();
+
+  var isFig = q.isFig;
+  $('figSeq').style.display = isFig ? 'flex' : 'none';
+  $('textOpts').style.display = isFig ? 'none' : 'flex';
+  $('figOpts').style.display = isFig ? 'flex' : 'none';
+
+  if (isFig) {
+    renderFigSeq(q);
+    renderFigOpts(q);
+  } else {
+    for (var k = 0; k < 4; k++) {
+      optEls[k].querySelector('.rt').textContent = q.opts[k];
+      optEls[k].classList.toggle('checked', g_answers[g_current] === k);
+    }
+  }
+
+  $('btnPrev').disabled = g_current <= 0;
+  $('btnNext').textContent = (g_current >= g_count - 1) ? '完成并交卷' : '下一题 →';
+}
+
+function renderFigSeq(q){
+  var box = $('figSeq');
+  box.innerHTML = '';
+  var n = q.seq.length;
+  var avail = box.clientWidth || 340;
+  var gap = 10;
+  var cell = Math.floor((avail - gap * (n - 1)) / n);
+  if (cell > 112) cell = 112;
+  if (cell < 48) cell = 48;
+
+  for (var i = 0; i < n; i++) {
+    var d = document.createElement('div');
+    d.className = 'seqcell';
+    d.style.width = cell + 'px';
+    d.style.height = cell + 'px';
+    var cv = document.createElement('canvas');
+    d.appendChild(cv);
+    box.appendChild(d);
+    var ctx = setupCanvas(cv, cell, cell);
+    drawShape(ctx, q.seq[i], cell, cell);
+  }
+}
+
+function renderFigOpts(q){
+  var cont = $('figOpts');
+  var cw = cont.clientWidth || 320;
+  var cols = cw >= 520 ? 4 : 2;
+  var gap = 14;
+  var size = Math.floor((cw - gap * (cols - 1)) / cols);
+  if (size > 160) size = 160;
+  if (size < 80) size = 80;
+
+  for (var i = 0; i < 4; i++) {
+    var fo = figOptEls[i];
+    fo.style.width = size + 'px';
+    fo.style.height = size + 'px';
+    var old = fo.querySelector('canvas');
+    if (old) old.parentNode.removeChild(old);
+    var cv = document.createElement('canvas');
+    fo.appendChild(cv);
+    var ctx = setupCanvas(cv, size, size);
+    drawShape(ctx, q.figOpts[i], size, size);
+    fo.classList.toggle('sel', g_answers[g_current] === i);
+  }
+}
+
+function pickTextOption(idx){
+  g_answers[g_current] = idx;
+  for (var k = 0; k < 4; k++) optEls[k].classList.toggle('checked', k === idx);
+}
+function pickFigureOption(idx){
+  g_answers[g_current] = idx;
+  for (var i = 0; i < 4; i++) figOptEls[i].classList.toggle('sel', i === idx);
+}
+function goPrev(){ if (g_current > 0) { g_current--; renderQuestion(); } }
+function goNext(){
+  if (g_current < g_count - 1) { g_current++; renderQuestion(); }
+  else confirmSubmit(false);
+}
+
+function hideConfirm(){ $('confirmBox').classList.remove('show'); }
+
+function confirmSubmit(timedOut){
+  if (g_finished) return;
+  if (timedOut) { stopTimer(); doSubmit(); return; }
+  if (g_noConfirm) { stopTimer(); doSubmit(); return; }
+
+  var unanswered = 0;
+  for (var i = 0; i < g_count; i++) if (g_answers[i] < 0) unanswered++;
+  $('confirmLbl').textContent = unanswered === 0
+    ? '全部答完，确定交卷吗？'
+    : '还有 ' + unanswered + ' 题没答（空着按错算），确定交卷吗？';
+  $('confirmBox').classList.add('show');
+}
+
+/* ================= 计分 ================= */
+function phi(z){
+  var sign = z < 0 ? -1.0 : 1.0;
+  var x = Math.abs(z) / Math.sqrt(2.0);
+  var t = 1.0 / (1.0 + 0.3275911 * x);
+  var erf = 1.0 - ((((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t) * Math.exp(-x * x);
+  return 0.5 * (1.0 + sign * erf);
+}
+function verdict(iq){
+  if (iq >= 130) return '非常优秀。在这套题上你的推理能力明显高出普通水平，数理和逻辑反应都很快。\n不过高分也意味着题目对你偏简单，真实水平可能比这个分数还要高。';
+  if (iq >= 120) return '优秀水平。你的抽象推理和逻辑分析能力明显强于大多数人，学习新知识通常会比较轻松。';
+  if (iq >= 110) return '中上水平。高于平均水平，处理复杂问题时有不错的分析能力，稍加练习数列和图形题还能再提。';
+  if (iq >= 90)  return '中等水平。这涵盖了大约一半的人，是最常见的区间。智力测试更多反映的是解题熟练度，不代表能力上限。';
+  if (iq >= 80)  return '中下水平。如果测试时比较仓促或状态不好，实际分数可能偏低，可以换个时间重测一次。';
+  return '分数偏低。这类测试受题目类型熟悉度影响很大，单次结果仅供参考；\n如确有评估需要，建议到专业机构做正规测评。';
+}
+function gradeText(iq){
+  if (iq >= 120) return '★★★★★  优秀';
+  if (iq >= 110) return '★★★★☆  良好';
+  if (iq >= 90)  return '★★★☆☆  中等';
+  if (iq >= 80)  return '★★☆☆☆  中下';
+  return '★☆☆☆☆  待提升';
+}
+
+function doSubmit(){
+  stopTimer();
+  g_finished = true;
+
+  var raw = 0, i, q;
+  for (i = 0; i < g_count; i++) {
+    q = QUESTIONS[g_exam[i]];
+    if (g_answers[i] === q.ans) raw += q.weight;
+  }
+  var iq = 100.0 + (raw - g_mean) * (15.0 / g_sd);
+  if (iq < 55) iq = 55;
+  if (iq > 160) iq = 160;
+  g_iqFinal = Math.floor(iq + 0.5);
+
+  var pct = phi((iq - 100.0) / 15.0) * 100.0;
+  if (pct < 0.1) pct = 0.1;
+  if (pct > 99.9) pct = 99.9;
+
+  $('rScore').textContent = String(g_iqFinal);
+  $('rGrade').textContent = '测评等级　' + gradeText(g_iqFinal);
+
+  var lo = g_iqFinal - 6; if (lo < 55) lo = 55;
+  var hi = g_iqFinal + 6; if (hi > 160) hi = 160;
+  $('rRange').textContent = '估分区间　' + lo + ' ~ ' + hi;
+
+  var pctX10 = Math.floor(pct * 10.0 + 0.5);
+  $('rPct').textContent = '大约超过了 ' + Math.floor(pctX10 / 10) + '.' + (pctX10 % 10) + '% 的人（正态模型估算）';
+
+  var usedSec = Math.floor((Date.now() - g_startTick) / 1000);
+  $('rTimeused').textContent = (g_limited ? '限时模式' : '不限时模式') + ' · 用时约 '
+    + Math.floor(usedSec / 60) + ' 分 ' + (usedSec % 60) + ' 秒';
+
+  $('rVerdict').textContent = verdict(g_iqFinal);
+
+  for (var c = 0; c < 5; c++) {
+    var got = 0, total = 0, correct = 0, cnt = 0;
+    for (var k = 0; k < g_count; k++) {
+      q = QUESTIONS[g_exam[k]];
+      if (q.cat === c) {
+        total += q.weight; cnt++;
+        if (g_answers[k] === q.ans) { got += q.weight; correct++; }
+      }
+    }
+    var rate = total === 0 ? 0 : Math.floor(got / total * 100.0 + 0.5);
+    g_catStats[c] = [correct, cnt, rate];
+  }
+
+  renderBars();
+  showPage(2);
+}
+
+function renderBars(){
+  var box = $('barsBox');
+  box.innerHTML = '';
+  for (var c = 0; c < 5; c++) {
+    var rate = g_catStats[c][2];
+    var row = document.createElement('div');
+    row.className = 'bar-row';
+    row.innerHTML =
+      '<div class="bar-head">' +
+        '<span class="bar-name">' + CATS[c] + '</span>' +
+        '<span class="bar-detail">答对 ' + g_catStats[c][0] + '/' + g_catStats[c][1] +
+        ' 题 · 得分率 ' + rate + '%</span>' +
+      '</div>' +
+      '<div class="bar-track"><div class="bar-fill"></div></div>';
+    box.appendChild(row);
+
+    var fill = row.querySelector('.bar-fill');
+    fill.style.background = rate >= 60
+      ? 'linear-gradient(90deg,#34d399,#10b981)'
+      : (rate >= 30
+          ? 'linear-gradient(90deg,#818cf8,#4f46e5)'
+          : 'linear-gradient(90deg,#fbbf24,#f97316)');
+
+    (function(f, r){
+      requestAnimationFrame(function(){ f.style.width = r + '%'; });
+    })(fill, rate);
+  }
+}
+
+/* ================= 逐题回顾 ================= */
+function shapeName(s){
+  if (s.k === 6) {
+    var deg = s.rot % 360;
+    var dir = deg === 0 ? '向右' : deg === 90 ? '向下' : deg === 180 ? '向左' : '向上';
+    return '箭头·' + dir;
+  }
+  var kinds = ['圆形','方形','三角形','菱形','五边形','六边形'];
+  var name = kinds[s.k];
+  if (s.dots > 0) return name + (s.filled ? '·实心' : '') + '·' + s.dots + '点';
+  if (s.filled) return name + '·实心';
+  if (s.scale >= 110) return name + '·加大';
+  return name;
+}
+
+function showReview(){
+  var box = $('reviewList');
+  box.innerHTML = '';
+  var right = 0;
+  for (var i = 0; i < g_count; i++) {
+    var q = QUESTIONS[g_exam[i]];
+    var ok = g_answers[i] === q.ans;
+    if (ok) right++;
+    var letter = String.fromCharCode(65 + q.ans);
+    var ansTxt = q.isFig ? shapeName(q.figOpts[q.ans]) : q.opts[q.ans];
+
+    var item = document.createElement('div');
+    item.className = 'rev-item ' + (ok ? 'ok' : 'no');
+    item.innerHTML =
+      '<div class="rev-idx">' + (i + 1 < 10 ? '0' : '') + (i + 1) + '</div>' +
+      '<div class="rev-body">' +
+        '<div class="rev-line">' +
+          '<span class="rev-cat">' + catName(q.cat) + ' · ' + q.weight + ' 分</span>' +
+          '<span class="rev-status">' + (ok ? '✓ 答对' : '✕ 答错') + '</span>' +
+        '</div>' +
+        '<div class="rev-ans">正确答案 ' + letter + ' · ' + esc(ansTxt) + '</div>' +
+      '</div>';
+    box.appendChild(item);
+  }
+  $('reviewSub').textContent = '本卷共 ' + g_count + ' 题，答对 ' + right + ' 题。';
+  showPage(3);
+}
+
+/* ================= 初始化 ================= */
+function init(){
+  optEls = [$('opt0'), $('opt1'), $('opt2'), $('opt3')];
+  figOptEls = [$('figopt0'), $('figopt1'), $('figopt2'), $('figopt3')];
+
+  // 开始页选项卡
+  var cards = document.querySelectorAll('[data-group]');
+  for (var i = 0; i < cards.length; i++) {
+    (function(el){
+      el.addEventListener('click', function(){
+        var g = el.getAttribute('data-group'), idx = +el.getAttribute('data-idx');
+        setChecked(g, idx);
+        if (g === 'age') {
+          if (idx === 3) setChecked('mode', 1);
+          updateIntro();
+        }
+      });
+    })(cards[i]);
+  }
+
+  // 答题页选项
+  for (var a = 0; a < 4; a++) {
+    (function(idx){
+      optEls[idx].addEventListener('click', function(){ pickTextOption(idx); });
+      figOptEls[idx].addEventListener('click', function(){ pickFigureOption(idx); });
+    })(a);
+  }
+
+  $('btnStart').addEventListener('click', startTest);
+  $('btnPrev').addEventListener('click', goPrev);
+  $('btnNext').addEventListener('click', goNext);
+  $('btnSubmit').addEventListener('click', function(){ confirmSubmit(false); });
+  $('btnConfirmYes').addEventListener('click', function(){ hideConfirm(); stopTimer(); doSubmit(); });
+  $('btnConfirmNo').addEventListener('click', hideConfirm);
+
+  $('rReview').addEventListener('click', showReview);
+  $('rRestart').addEventListener('click', function(){ stopTimer(); showPage(0); });
+  $('reviewBack').addEventListener('click', function(){ showPage(2); });
+
+  // 默认：成人版 + 限时模式
+  setChecked('age', 2);
+  setChecked('mode', 0);
+
+  // 隐藏测试开关
+  var qp = new URLSearchParams(location.search);
+  if (qp.has('test')) g_noConfirm = true;
+  if (qp.get('ans') === 'best') g_ansMode = 4;
+  if (qp.has('goto')) { var n = parseInt(qp.get('goto'), 10); if (!isNaN(n)) g_gotoN = n; }
+  if (qp.has('ver')) setChecked('age', Math.min(3, Math.max(0, +qp.get('ver') || 0)));
+  if (qp.get('mode') === 'untimed') setChecked('mode', 1);
+
+  updateIntro();
+
+  if (qp.has('auto')) {
+    startTest();
+    if (qp.has('submit')) {
+      doSubmit();
+      if (qp.has('review')) showReview();
+    }
+  }
+}
+
+/* 窗口尺寸变化后重绘当前题目的图形 */
+var rzTimer = null;
+window.addEventListener('resize', function(){
+  if (g_state !== 1) return;
+  clearTimeout(rzTimer);
+  rzTimer = setTimeout(renderQuestion, 160);
+});
+window.addEventListener('orientationchange', function(){
+  if (g_state === 1) setTimeout(renderQuestion, 260);
+});
+
+init();
+</script>
+</body>
+</html>
